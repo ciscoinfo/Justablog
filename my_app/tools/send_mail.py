@@ -8,6 +8,7 @@ SENDER_PASS = os.environ.get('SENDER_PASS', -1)
 TO_MAIL = os.environ.get('TO_MAIL', -1)
 
 def send_email(subject, content):
+
     sender = {
         "email": SENDER_MAIL,
         "password": SENDER_PASS
