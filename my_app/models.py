@@ -4,7 +4,7 @@ from flask_login import UserMixin
 from sqlalchemy.orm import relationship
 
 from my_app import db
-from my_app import fn_tools
+from my_app.tools import fn_tools
 
 
 ##CONFIGURE TABLES
@@ -12,7 +12,9 @@ from my_app import fn_tools
 
 ##CREATE TABLE IN DB
 class User(UserMixin, db.Model):
+
     __tablename__ = "users"
+
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
@@ -29,7 +31,9 @@ class User(UserMixin, db.Model):
 
 
 class BlogPost(db.Model):
+
     __tablename__ = "blog_posts"
+
     id = db.Column(db.Integer, primary_key=True)
     # author = db.Column(db.String(250), nullable=False)
     title = db.Column(db.String(250), unique=True, nullable=False)
@@ -39,7 +43,7 @@ class BlogPost(db.Model):
     img_url = db.Column(db.String(250), nullable=False)
 
     # ------------ Parent relationship ------------ #
-    comments = relationship("Comment", back_populates="comment_post")
+    comments = relationship("Comment", back_populates="parent_post")
 
     # ------------ Child relationship ------------ #
 
@@ -49,10 +53,8 @@ class BlogPost(db.Model):
     # Create reference to the User object, the "posts" refers to the posts property in the User class.
     blogpost_author = relationship("User", back_populates="posts")
 
-
-    # New instance instantiation procedure
-    def __init__(self, author, title, subtitle, body, img_url):
-        self.author = author
+    def __init__(self, blogpost_author, title, subtitle, body, img_url):
+        self.blogpost_author = blogpost_author
         self.title = title
         self.subtitle = subtitle
         self.body = body
@@ -64,7 +66,9 @@ class BlogPost(db.Model):
 
 
 class Comment(db.Model):
+
     __tablename__ = "comments"
+
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
     # ------------ Child relationship ------------ #
@@ -79,13 +83,9 @@ class Comment(db.Model):
 
     # ------------ Child of : BlogPost
     post_id = db.Column(db.Integer, db.ForeignKey('blog_posts.id'))
-    comment_post = relationship("BlogPost", back_populates="comments")
+    parent_post = relationship("BlogPost", back_populates="comments")
 
-    def __init__(self, text, author_id, post_id):
+    def __init__(self, text, comment_author, parent_post):
         self.text = text
-        self.author_id = author_id
-        self.post_id = post_id
-
-# User.__table__.drop(engine)
-# Line below only required once, when creating DB.
-# db.create_all()
+        self.comment_author = comment_author
+        self.parent_post = parent_post

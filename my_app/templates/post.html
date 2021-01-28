@@ -29,7 +29,7 @@
                 <hr>
 
                 <div class="clearfix">
-                    {% if current_user.is_admin %}
+                    {% if current_user.is_admin and post.blogpost_author.name != 'Admin' %}
                     <a class="btn btn-primary float-right" href="{{url_for('edit_post', post_id=post.id)}}">Edit Post</a>
                     {% endif %}
                 </div>

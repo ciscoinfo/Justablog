@@ -15,24 +15,36 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from my_app import db
 
 # Import module models (i.e. User)
-from my_app.models import BlogPost
-from my_app.models import User
-from my_app.models import Comment
+from my_app.models import *
 
 from functools import wraps
 
+from my_app.tools.send_mail import send_email
+
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+
+@app.context_processor
+def inject_now():
+    return {
+        'now': date.today().year,
+        'current_user': current_user
+    }
 
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+
 # Create admin-only decorator
 def admin_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        print("hello")
+        print(current_user.is_authenticated)
+        print(current_user.is_admin)
         if current_user.is_authenticated and current_user.is_admin:
             return f(*args, **kwargs)
         return abort(403)
@@ -54,16 +66,32 @@ def get_hash_password(password):
 @app.route('/')
 def get_all_posts():
     posts = BlogPost.query.all()
-    return render_template("index.html", all_posts=posts, current_user=current_user)
+    return render_template("index.html", all_posts=posts)
+
 
 @app.route("/about")
 def about():
-    return render_template("about.html", current_user=current_user)
+    return render_template("about.html")
 
 
-@app.route("/contact")
+@app.route("/contact", methods=['POST', 'GET'])
 def contact():
-    return render_template("contact.html", current_user=current_user)
+    form = forms.ContactForm()
+    msg_sent = False
+    if form.validate_on_submit():
+        msg_sent = True
+        name = form.name.data
+        message = form.message.data
+        email = form.email.data
+        content = f"name : \t{name}\nmessage : \t{message}\nemail : \t{email}"
+        send_email(subject="[BLOG] New message",
+                   content=content
+                   )
+        print(content)
+        form.clear()
+
+    return render_template("contact.html", form=form, msg_sent=msg_sent)
+
 
 @app.route("/post/<int:post_id>", methods=["GET", "POST"])
 def show_post(post_id):
@@ -78,13 +106,13 @@ def show_post(post_id):
 
         new_comment = Comment(
             text=form.body.data,
-            author_id=current_user.id,
-            post_id=post_id
+            comment_author=current_user,
+            parent_post=requested_post
         )
         db.session.add(new_comment)
         db.session.commit()
     form.body.data = ""
-    return render_template("post.html", post=requested_post, form=form, current_user=current_user)
+    return render_template("post.html", post=requested_post, form=form)
 
 
 # ------------------ LOGIN
@@ -118,7 +146,7 @@ def register():
         login_user(new_user)
         return redirect(url_for("get_all_posts"))
 
-    return render_template("register.html", form=form, current_user=current_user)
+    return render_template("register.html", form=form)
 
 
 @app.route('/login', methods=["GET", "POST"])
@@ -144,7 +172,7 @@ def login():
             flash('That email does not exist, please try again.')
         return redirect(url_for('login'))
 
-    return render_template("login.html", form=form, current_user=current_user)
+    return render_template("login.html", form=form)
 
 
 @app.route('/logout')
@@ -155,7 +183,7 @@ def logout():
 # ------------------ POSTS
 
 
-@app.route("/new-post")
+@app.route("/new-post", methods=["GET", "POST"])
 @admin_only
 def add_new_post():
     form = forms.CreatePostForm()
@@ -165,38 +193,36 @@ def add_new_post():
             subtitle=form.subtitle.data,
             body=form.body.data,
             img_url=form.img_url.data,
-            author=current_user,
-            date=date.today().strftime("%B %d, %Y")
+            blogpost_author=current_user
         )
+        print(current_user)
         db.session.add(new_post)
         db.session.commit()
         return redirect(url_for("get_all_posts"))
-    return render_template("make-post.html", form=form)
+    return render_template("make-post.html", form=form, is_edit=False)
 
 
-
-@app.route("/edit-post/<int:post_id>")
+@app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
 @admin_only
 def edit_post(post_id):
+    print("edit post")
     post = BlogPost.query.get(post_id)
     edit_form = forms.CreatePostForm(
         title=post.title,
         subtitle=post.subtitle,
         img_url=post.img_url,
-        author=post.author,
         body=post.body
     )
     if edit_form.validate_on_submit():
+        print("submit")
         post.title = edit_form.title.data
         post.subtitle = edit_form.subtitle.data
         post.img_url = edit_form.img_url.data
-        post.author = edit_form.author.data
         post.body = edit_form.body.data
         db.session.commit()
         return redirect(url_for("show_post", post_id=post.id))
 
-    return render_template("make-post.html", form=edit_form, current_user=current_user)
-
+    return render_template("make-post.html", form=edit_form, is_edit=True)
 
 
 @app.route("/delete/<int:post_id>")
