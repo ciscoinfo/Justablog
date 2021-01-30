@@ -34,3 +34,7 @@ class TestingConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     DEBUG = False
+
+    CSRF_SESSION_KEY = os.environ.get('CSRF_SESSION_KEY', -1)
+    # Secret key for signing cookies
+    SECRET_KEY = os.environ.get('SECRET_KEY', -1)
