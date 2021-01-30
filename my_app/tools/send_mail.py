@@ -7,6 +7,7 @@ SENDER_MAIL = os.environ.get('SENDER_MAIL', -1)
 SENDER_PASS = os.environ.get('SENDER_PASS', -1)
 TO_MAIL = os.environ.get('TO_MAIL', -1)
 
+
 def send_email(subject, content):
 
     sender = {
@@ -34,6 +35,7 @@ def _send_email(sender, content):
                             to_addrs=content.get("to"),
                             msg=f"Subject:{content.get('subject')}\n\n{content.get('msg')}".encode("utf8")
                             )
+
 
 if __name__ == "__main__":
 

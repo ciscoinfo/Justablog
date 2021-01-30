@@ -5,16 +5,11 @@ from flask import request, render_template, flash, redirect, url_for, abort
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from datetime import date
 
-import os
-
 # import forms
 import my_app.forms as forms
 
 # Import password / encryption helper tools
 from werkzeug.security import generate_password_hash, check_password_hash
-
-# Import the database object from the main app module
-from my_app import db
 
 # Import module models (i.e. User)
 from my_app.models import *
@@ -75,12 +70,6 @@ def get_all_posts():
 def about():
     return render_template("about.html")
 
-@app.route("/infos")
-def infos():
-    SENDER_MAIL = os.environ.get('SENDER_MAIL', -1)
-    TO_MAIL = os.environ.get('TO_MAIL', -1)
-    res = f"<p>SENDER_MAIL = {SENDER_MAIL}<br>TO_MAIL = {TO_MAIL}</p>"
-    return res
 
 @app.route("/contact", methods=['POST', 'GET'])
 def contact():
