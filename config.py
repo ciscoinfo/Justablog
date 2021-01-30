@@ -35,6 +35,7 @@ class TestingConfig(BaseConfig):
 class ProductionConfig(BaseConfig):
     DEBUG = False
 
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', -1)
     CSRF_SESSION_KEY = os.environ.get('CSRF_SESSION_KEY', -1)
     # Secret key for signing cookies
     SECRET_KEY = os.environ.get('SECRET_KEY', -1)
