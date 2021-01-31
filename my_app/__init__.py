@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash
+from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from flask_sqlalchemy import SQLAlchemy
@@ -6,7 +6,6 @@ from flask_gravatar import Gravatar
 
 # set instance_relative_config=True
 # app.config.from_pyfile() will load the specified file from the instance/ directory.
-from my_app.tools.add_base import make_superadmin
 
 app = Flask(__name__, instance_relative_config=True)
 
@@ -43,5 +42,3 @@ import my_app.views
 # This will create the database file using SQLAlchemy
 # db.create_all()
 
-# make_superadmin("admin@email.com")
-# make_superadmin("test-admin@email.com")

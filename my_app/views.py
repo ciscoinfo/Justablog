@@ -21,6 +21,9 @@ from my_app.tools.send_mail import send_email
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+make_superadmin("admin@email.com")
+make_superadmin("test-admin@email.com")
+
 
 @app.context_processor
 def inject_now():
