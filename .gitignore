@@ -5,6 +5,7 @@
 
 ### db local ###
 /local_db/
+local_db/
 
 ### Tests ###
 tests/
