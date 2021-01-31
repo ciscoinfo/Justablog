@@ -6,6 +6,8 @@ from flask_gravatar import Gravatar
 
 # set instance_relative_config=True
 # app.config.from_pyfile() will load the specified file from the instance/ directory.
+from my_app.tools.add_base import make_superadmin
+
 app = Flask(__name__, instance_relative_config=True)
 
 # Load the default configuration
@@ -40,3 +42,6 @@ import my_app.views
 # Build the database:
 # This will create the database file using SQLAlchemy
 db.create_all()
+
+make_superadmin("admin@email.com")
+make_superadmin("test-admin@email.com")
