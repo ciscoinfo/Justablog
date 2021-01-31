@@ -43,5 +43,5 @@ import my_app.views
 # This will create the database file using SQLAlchemy
 # db.create_all()
 
-make_superadmin("admin@email.com")
-make_superadmin("test-admin@email.com")
+# make_superadmin("admin@email.com")
+# make_superadmin("test-admin@email.com")
