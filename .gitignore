@@ -4,6 +4,9 @@
 
 
 ### Tests ###
+local_db/
+
+### Tests ###
 tests/
 
 ### Flask ###

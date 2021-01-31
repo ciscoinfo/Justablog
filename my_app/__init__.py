@@ -9,7 +9,7 @@ from flask_gravatar import Gravatar
 app = Flask(__name__, instance_relative_config=True)
 
 # Load the default configuration
-app.config.from_object('config.ProductionConfig')
+app.config.from_object('config.DevelopmentConfig')
 
 # Load the configuration from the instance folder
 app.config.from_pyfile('config.py', silent=True)
@@ -39,4 +39,4 @@ import my_app.views
 
 # Build the database:
 # This will create the database file using SQLAlchemy
-# db.create_all()
+db.create_all()
