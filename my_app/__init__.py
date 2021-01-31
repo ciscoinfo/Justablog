@@ -9,7 +9,7 @@ from flask_gravatar import Gravatar
 app = Flask(__name__, instance_relative_config=True)
 
 # Load the default configuration
-app.config.from_object('config.DevelopmentConfig')
+app.config.from_object('config.ProductionConfig')
 
 # Load the configuration from the instance folder
 app.config.from_pyfile('config.py', silent=True)
