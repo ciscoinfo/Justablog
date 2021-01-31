@@ -10,7 +10,7 @@ class BaseConfig(object):
     DEBUG = False
 
     # CONNECT TO DB
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'local_db', 'new_blog_2.db')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'new_blog_2.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DATABASE_CONNECT_OPTIONS = {}
 

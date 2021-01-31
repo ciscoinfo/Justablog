@@ -6,9 +6,6 @@
 ### Tests ###
 tests/
 
-### db ###
-local_db/
-
 ### Flask ###
 instance/*
 !instance/.gitignore
